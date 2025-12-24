@@ -1,5 +1,6 @@
 #pragma once
 #include <cmath>
+#include <iostream>
 
 typedef char s8;
 typedef unsigned char u8;

@@ -45,6 +45,8 @@ LRESULT CALLBACK WindowCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     return result;
 }
 
+HWND gWindow = NULL;
+
 // Entry point
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
     WNDCLASS wc = {};
@@ -65,6 +67,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     );
 
     if (!window) return 0;
+
+    gWindow = window;
 
     HDC hdc = GetDC(window);
     Input input = {};

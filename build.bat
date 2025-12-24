@@ -2,14 +2,14 @@
 setlocal EnableDelayedExpansion
 
 echo ============================================
-echo Building RainfrogQuest
+echo Building Tiamo.exe...
 echo ============================================
 
 set COMPILER=g++
 set FLAGS=-std=c++20 -Wall -Wextra -O2
 
 set OUT_DIR=bin
-set EXE_NAME=RainfrogQuest.exe
+set EXE_NAME=Tiamo.exe
 
 if not exist "%OUT_DIR%" mkdir "%OUT_DIR%"
 

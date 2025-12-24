@@ -1,19 +1,18 @@
-#include "playerController.h"
+#include "AStarManager.h"
 
-// Define the global nodes vector (header declares it as extern)
 vector<Node*> nodes;
 float step;
 void GenerateNodeGrid() {
     nodes.clear();
 
-    int multiplier = Bigger(renderState.width, renderState.height);
-    step = 0.05f * multiplier;
+    const float defaultStep = 32.0f;
+    step = defaultStep;
 
     for (float y = 0; y <= renderState.height; y += step) {
         for (float x = 0; x <= renderState.width; x += step) {
             Node* n = new Node();
-            n->posX = x / renderState.width;
-            n->posY = y / renderState.height;
+            n->posX = x;
+            n->posY = y;
             nodes.push_back(n);
         }
     }
@@ -54,7 +53,6 @@ vector<Node*> GeneratePath(Node* startNode, Node* targetNode) {
                 path.insert(path.begin(), currentNode);
             }
 
-            reverse(path.begin(), path.end());
             return path;
         }
 
