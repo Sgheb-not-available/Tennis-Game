@@ -11,8 +11,8 @@ using namespace std;
 
 extern vector<Node*> nodes;
 extern float step;
+extern float nodeStep;
 
-void GenerateNodeGrid();
 vector<Node*> GeneratePath(Node* startNode, Node* targetNode);
 Node* FindClosestNode(float x, float y);
 Node* FindFurthestNode(float x, float y);

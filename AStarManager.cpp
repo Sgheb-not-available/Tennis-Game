@@ -2,25 +2,7 @@
 
 vector<Node*> nodes;
 float step;
-void GenerateNodeGrid() {
-    nodes.clear();
-
-    const float defaultStep = 16.f;
-    step = defaultStep;
-
-    for (float y = 0; y <= renderState.height; y += step) {
-        for (float x = 0; x <= renderState.width; x += step) {
-            Node* n = new Node();
-            n->posX = x;
-            n->posY = y;
-            nodes.push_back(n);
-        }
-    }
-
-    for (Node* n : nodes) {
-        n->neighbors = n->GetNeighbors();
-    }
-}
+float nodeStep;
 
 vector<Node*> GeneratePath(Node* startNode, Node* targetNode) {
     vector<Node*> openSet;

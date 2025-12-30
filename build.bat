@@ -4,14 +4,26 @@ setlocal EnableDelayedExpansion
 for /F %%a in ('echo prompt $E ^| cmd') do set "ESC=%%a"
 
 echo %ESC%[35m============================================%ESC%[0m
-echo %ESC%[35mBuilding Tiamo.exe...%ESC%[0m
+echo %ESC%[35mBuilding test.exe...%ESC%[0m
 echo %ESC%[35m============================================%ESC%[0m
 
 set COMPILER=g++
-set FLAGS=-std=c++20 -Wall -Wextra -O2
+set FLAGS=-std=c++20 -Wall -Wextra -O2 -static
 
 set OUT_DIR=build
-set EXE_NAME=Tiamo.exe
+set EXE_NAME=test.exe
+
+:: === ENet paths (YOUR STRUCTURE) ===
+set ENET_ROOT=enet-1.3.18
+set ENET_INCLUDE=%ENET_ROOT%\include
+set ENET_SRC=%ENET_ROOT%\callbacks.c ^
+             %ENET_ROOT%\compress.c ^
+             %ENET_ROOT%\host.c ^
+             %ENET_ROOT%\list.c ^
+             %ENET_ROOT%\packet.c ^
+             %ENET_ROOT%\peer.c ^
+             %ENET_ROOT%\protocol.c ^
+             %ENET_ROOT%\win32.c
 
 if not exist "%OUT_DIR%" mkdir "%OUT_DIR%"
 
@@ -29,8 +41,15 @@ if "%SOURCES%"=="" (
 )
 
 echo.
-echo %ESC%[33mCompiling and Linking...%ESC%[0m
-%COMPILER% %SOURCES% %FLAGS% -lgdi32 -luser32 -o "%OUT_DIR%\%EXE_NAME%"
+echo %ESC%[33mCompiling and Linking (with ENet)...%ESC%[0m
+
+%COMPILER% ^
+%SOURCES% ^
+%ENET_SRC% ^
+%FLAGS% ^
+-I"%ENET_INCLUDE%" ^
+-lgdi32 -luser32 -lws2_32 -lwinmm ^
+-o "%OUT_DIR%\%EXE_NAME%"
 
 if errorlevel 1 (
     echo.

@@ -10,9 +10,5 @@ enum LogLvl {
     LOG_ERROR
 };
 
-class Logger {
-    public:
-        void Log(LogLvl lvl, const std::string& msg);
-    private:
-        std::string LvlToString(LogLvl lvl);
-};
+void Log(LogLvl lvl, const std::string& msg);
+std::string LvlToString(LogLvl lvl);

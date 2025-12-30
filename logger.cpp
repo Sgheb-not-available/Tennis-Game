@@ -1,6 +1,6 @@
 #include "logger.h"
 
-void Logger::Log(LogLvl lvl, const std::string& msg) {
+void Log(LogLvl lvl, const std::string& msg) {
     time_t now = time(0);
     tm* timeinfo = localtime(&now);
     char timestamp[20]; 
@@ -11,7 +11,7 @@ void Logger::Log(LogLvl lvl, const std::string& msg) {
     std::cout<<"["<<timestamp<<"] "<<logLvlStr<<": "<<msg<<std::endl;
 }
 
-std::string Logger::LvlToString(LogLvl lvl) {
+std::string LvlToString(LogLvl lvl) {
     switch(lvl) {
         case LOG_DEBUG:
             return "DEBUG";
