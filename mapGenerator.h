@@ -23,8 +23,8 @@ class MapGenerator {
         int initialHeight = renderState.height;
 
         bool mapGenerated = false;
-        bool obstaclesGenerated = false;
         bool gridGenerated = false;
+        bool regeneratingMap = false;
         vector<POINT> obstacles;
         u32 grassColor = 0x00FF00;
         u32 waterColor = 0x00FFFF;

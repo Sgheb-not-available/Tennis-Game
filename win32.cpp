@@ -47,6 +47,38 @@ LRESULT CALLBACK WindowCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 HWND gWindow = NULL;
 
+static bool gIsFullscreen = true;
+static DWORD gPrevStyle = WS_OVERLAPPEDWINDOW;
+static DWORD gPrevExStyle = 0;
+static RECT gPrevRect = { CW_USEDEFAULT, CW_USEDEFAULT, 1060, 1060 };
+
+static void ToggleFullscreen(HWND hwnd) {
+    if (!hwnd) return;
+    if (gIsFullscreen) {
+        // switch to windowed (bordered) but still cover the full screen
+        SetWindowLongPtrW(hwnd, GWL_STYLE, (LONG_PTR)WS_OVERLAPPEDWINDOW);
+        SetWindowLongPtrW(hwnd, GWL_EXSTYLE, (LONG_PTR)gPrevExStyle);
+        int screenW = GetSystemMetrics(SM_CXSCREEN);
+        int screenH = GetSystemMetrics(SM_CYSCREEN);
+        SetWindowPos(hwnd, HWND_NOTOPMOST, 0, 0, screenW, screenH,
+                     SWP_FRAMECHANGED | SWP_SHOWWINDOW);
+        gIsFullscreen = false;
+    } else {
+        // save current windowed styles/rect then go fullscreen
+        gPrevStyle = (DWORD)GetWindowLongPtrW(hwnd, GWL_STYLE);
+        gPrevExStyle = (DWORD)GetWindowLongPtrW(hwnd, GWL_EXSTYLE);
+        GetWindowRect(hwnd, &gPrevRect);
+
+        int screenW = GetSystemMetrics(SM_CXSCREEN);
+        int screenH = GetSystemMetrics(SM_CYSCREEN);
+
+        SetWindowLongPtrW(hwnd, GWL_STYLE, (LONG_PTR)WS_POPUP);
+        SetWindowLongPtrW(hwnd, GWL_EXSTYLE, 0);
+        SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, screenW, screenH, SWP_FRAMECHANGED | SWP_SHOWWINDOW);
+        gIsFullscreen = true;
+    }
+}
+
 // Entry point
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
     WNDCLASS wc = {};
@@ -57,16 +89,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     RegisterClass(&wc);
 
+    // Create a borderless fullscreen window by default
+    int screenW = GetSystemMetrics(SM_CXSCREEN);
+    int screenH = GetSystemMetrics(SM_CYSCREEN);
+
     HWND window = CreateWindowA(
         wc.lpszClassName,
         "test.exe",
-        WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-        CW_USEDEFAULT, CW_USEDEFAULT,
-        1060, 1060,
+        WS_POPUP | WS_VISIBLE,
+        0, 0,
+        screenW, screenH,
         NULL, NULL, hInstance, NULL
     );
 
     if (!window) return 0;
+
+    // Ensure the window is topmost and sized to cover the entire screen
+    SetWindowPos(window, HWND_TOPMOST, 0, 0, screenW, screenH, SWP_SHOWWINDOW);
 
     gWindow = window;
 
@@ -95,17 +134,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
                     bool isDown = ((message.lParam & (1 << 31)) == 0);
 
                     switch (vkCode) {
-                        case VK_UP:
-                            input.buttons[BUTTON_UP] = {isDown, true};
-                            break;
-                        case VK_DOWN:
-                            input.buttons[BUTTON_DOWN] = {isDown, true};
-                            break;
-                        case VK_LEFT:
-                            input.buttons[BUTTON_LEFT] = {isDown, true};
-                            break;
-                        case VK_RIGHT:
-                            input.buttons[BUTTON_RIGHT] = {isDown, true};
+                        case VK_F11:
+                            input.buttons[BUTTON_F11] = {isDown, true};
+                            if (isDown) ToggleFullscreen(window);
                             break;
                     }
                 } break;

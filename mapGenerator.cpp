@@ -3,8 +3,6 @@
 void MapGenerator::DrawMap() {
     step = 128.f;
 
-    if(renderState.width != initialWidth || renderState.height != initialHeight) ResetMap();
-
     if(!mapGenerated) {
         openPos.clear();
         for(int x = 0; x < renderState.width; x += (int)step) {
@@ -22,7 +20,7 @@ void MapGenerator::DrawMap() {
         mapGenerated = true;
     }
     else {
-        for (const POINT &pos : openPos) {
+        for(const POINT &pos : openPos) {
             PixelDrawRect(pos.x, pos.y, (int)step, (int)step, grassColor);
         }
     }
@@ -35,13 +33,13 @@ void MapGenerator::DrawMap() {
 void MapGenerator::DrawObstacles() {
     maxObstacles = int(0.00002f * renderState.width * renderState.height);
 
-    if(!obstaclesGenerated) {
+    if(obstacles.empty() && !regeneratingMap) {
         obstacles.clear();
         int available = (int)openPos.size();
         int toPlace = maxObstacles;
         if (toPlace > available) toPlace = available;
 
-        for (int i = 1; i < toPlace; ++i) {
+        for(int i = 1; i < toPlace; ++i) {
             if (openPos.empty()) break;
             int index = rand() % (int)openPos.size();
             POINT obstaclePos = openPos[index];
@@ -51,11 +49,9 @@ void MapGenerator::DrawObstacles() {
 
             openPos.erase(openPos.begin() + index);
         }
-
-        obstaclesGenerated = true;
     }
     else {
-        for (const POINT &pos : obstacles) {
+        for(const POINT &pos : obstacles) {
             PixelDrawRect(pos.x, pos.y, pos.x + (int)step, pos.y + (int)step, waterColor);
         }
     }
@@ -79,11 +75,13 @@ void MapGenerator::GenerateNodeGrid() {
 }
 
 void MapGenerator::ResetMap() {
+    regeneratingMap = true;
+    
     initialWidth = renderState.width;
     initialHeight = renderState.height;
 
     mapGenerated = false;
-    obstaclesGenerated = false;
+    obstacles.clear();
     gridGenerated = false;
 }
 
@@ -92,7 +90,7 @@ const std::vector<POINT>& MapGenerator::GetMapData() {
 }
 
 void MapGenerator::SetMapData(const std::vector<POINT>& data) {
-    obstacles = data;
     ResetMap();
-    Log(LOG_ERROR, "Mappa non settata correttamente");
+    obstacles = data;
+    regeneratingMap = false;
 }

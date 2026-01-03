@@ -1,6 +1,6 @@
 #include "renderer.h"
 
-RenderState renderState; // define the global renderState here
+RenderState renderState;
 
 void ClearScreen(u32 color) {
     u32* pixel = (u32*)renderState.memory;
@@ -42,7 +42,7 @@ void DrawRect(float posX, float posY, float halfSizeX, float halfSizeY, u32 colo
     PixelDrawRect(x0, y0, x1, y1, color);
 }
 
-void DrawRectScale(float posX, float posY, float halfSizeX, float halfSizeY, u32 color) {
+void DrawRectScaling(float posX, float posY, float halfSizeX, float halfSizeY, u32 color) {
     int multiplier = Bigger(renderState.width, renderState.height);
 
     posX *= renderState.width;

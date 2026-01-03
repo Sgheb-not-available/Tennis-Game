@@ -6,10 +6,7 @@ struct ButtonState {
 };
 
 enum {
-    BUTTON_UP,
-    BUTTON_DOWN,
-    BUTTON_LEFT,
-    BUTTON_RIGHT,
+    BUTTON_F11, 
     LEFT_MOUSE,
 
     BUTTON_COUNT
