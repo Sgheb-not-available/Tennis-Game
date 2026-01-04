@@ -17,7 +17,7 @@ vector<Node*> GeneratePath(Node* startNode, Node* targetNode) {
 
     while (!openSet.empty()) {
         int lowestF = 0;
-        for (int i = 1; i < openSet.size(); i++) {
+        for (u64 i = 1; i < openSet.size(); i++) {
             if (openSet[i]->fCost() < openSet[lowestF]->fCost()) {
                 lowestF = i;
             }

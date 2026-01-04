@@ -1,10 +1,10 @@
 #include "player.h"
 
 void Player::Draw() {
-    int x = (int)(posX);
-    int y = (int)(posY);
-    int x1 = (int)(posX + halfSizeX);
-    int y1 = (int)(posY + halfSizeY);
+    int x = (int)(posX - halfSize);
+    int y = (int)(posY - halfSize);
+    int x1 = (int)(posX + halfSize);
+    int y1 = (int)(posY + halfSize);
     PixelDrawRect(x, y, x1, y1, color);
 }
 

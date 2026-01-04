@@ -10,15 +10,14 @@ class Player {
     public:
         int playerId = 0;
 
-        float posX = 0.f;
-        float posY = 0.f;
+        float posX = 50.f;
+        float posY = 50.f;
 
         float speed = 100.f;
 
         bool moving = false;
 
-        float halfSizeX = 50.f; 
-        float halfSizeY = 50.f; 
+        float halfSize = 25.f;  
 
         u32 color = 0x000000;
 

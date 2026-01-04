@@ -31,7 +31,7 @@ void MapGenerator::DrawMap() {
 }
 
 void MapGenerator::DrawObstacles() {
-    maxObstacles = int(0.00002f * renderState.width * renderState.height);
+    maxObstacles = int(0.00001f * renderState.width * renderState.height);
 
     if(obstacles.empty() && !regeneratingMap) {
         obstacles.clear();
