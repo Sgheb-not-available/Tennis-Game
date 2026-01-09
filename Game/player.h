@@ -1,10 +1,10 @@
 #pragma once
 #include <vector>
 #include <iostream>
-#include "renderer.h"
+#include "../Engine/renderer.h"
 #include "mapGenerator.h"
-#include "win32.h"
-#include "logger.h"
+#include "../Engine/win32.h"
+#include "../Engine/logger.h"
 
 class Player {
     public:

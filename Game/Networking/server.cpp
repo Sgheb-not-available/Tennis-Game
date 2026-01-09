@@ -1,5 +1,5 @@
 #include "networking.h"
-#include "game.h"
+#include "../game.h"
 
 void ServerInit() {
     ENetAddress address = {};

@@ -13,7 +13,7 @@ set FLAGS=-std=c++20 -Wall -Wextra -O2 -static
 set OUT_DIR=build
 set EXE_NAME=test.exe
 
-set ENET_ROOT=enet-1.3.18
+set ENET_ROOT=Engine\enet-1.3.18
 set ENET_INCLUDE=%ENET_ROOT%\include
 set ENET_SRC=%ENET_ROOT%\callbacks.c ^
              %ENET_ROOT%\compress.c ^
@@ -33,6 +33,26 @@ for %%f in (*.cpp) do (
     set SOURCES=!SOURCES! "%%f"
 )
 
+for %%f in (Engine\*.cpp) do (
+    echo Found: %%f
+    set SOURCES=!SOURCES! "%%f"
+)
+
+for %%f in (Game\*.cpp) do (
+    echo Found: %%f
+    set SOURCES=!SOURCES! "%%f"
+)
+
+for %%f in (Game\PathFinding\*.cpp) do (
+    echo Found: %%f
+    set SOURCES=!SOURCES! "%%f"
+)
+
+for %%f in (Game\Networking\*.cpp) do (
+    echo Found: %%f
+    set SOURCES=!SOURCES! "%%f"
+)
+
 if "%SOURCES%"=="" (
     echo %ESC%[31mNO .cpp FILES FOUND%ESC%[0m
     pause
@@ -47,6 +67,10 @@ echo %ESC%[33mCompiling and Linking (with ENet)...%ESC%[0m
 %ENET_SRC% ^
 %FLAGS% ^
 -I"%ENET_INCLUDE%" ^
+-I"Engine" ^
+-I"Game" ^
+-I"Game\PathFinding" ^
+-I"Game\Networking" ^
 -lgdi32 -luser32 -lws2_32 -lwinmm ^
 -o "%OUT_DIR%\%EXE_NAME%"
 

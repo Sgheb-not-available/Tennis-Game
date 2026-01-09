@@ -1,5 +1,8 @@
 #include "node.h"
 
+extern std::vector<Node*> nodes;
+extern float step;
+
 std::vector<Node*> Node::GetNeighbors() {
     std::vector<Node*> result;
 

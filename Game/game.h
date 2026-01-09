@@ -3,12 +3,12 @@
 #include <iostream>
 #include <thread>
 #include <vector>
-#include "platformCommon.h"
-#include "renderer.h"
-#include "logger.h"
+#include "../Engine/platformCommon.h"
+#include "../Engine/renderer.h"
+#include "../Engine/logger.h"
 #include "player.h"
 #include "mapGenerator.h"
-#include "networking.h"
+#include "Networking/networking.h"
 
 #define isDown(b) input->buttons[b].isDown
 #define pressed(b) (input->buttons[b].isDown && input->buttons[b].changed)

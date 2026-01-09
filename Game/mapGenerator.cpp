@@ -7,13 +7,9 @@ void MapGenerator::DrawMap() {
         openPos.clear();
         for(int x = 0; x < renderState.width; x += (int)step) {
             for(int y = 0; y < renderState.height; y += (int)step) {
-                POINT tilePos;
-                tilePos.x = x;
-                tilePos.y = y;
-                openPos.push_back(tilePos);
+                TilePosInit(x, y);
 
                 PixelDrawRect(x, y, (int)step, (int)step, grassColor);
-                Log(LOG_DEBUG, "Generated normal tile at (" + std::to_string(x) + ", " + std::to_string(y) + ").");
             }
         }
 
@@ -60,6 +56,13 @@ void MapGenerator::DrawObstacles() {
             PixelDrawRect(pos.x, pos.y, pos.x + (int)step, pos.y + (int)step, waterColor);
         }
     }
+}
+
+void MapGenerator::TilePosInit(int x, int y) {
+    POINT tilePos;
+    tilePos.x = x;
+    tilePos.y = y;
+    openPos.push_back(tilePos);
 }
 
 void MapGenerator::GenerateNodeGrid() {

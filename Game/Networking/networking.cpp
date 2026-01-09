@@ -1,5 +1,5 @@
 #include "networking.h"
-#include "game.h"
+#include "../game.h"
 
 int maxClients = 4;
 int currentClients = 0;

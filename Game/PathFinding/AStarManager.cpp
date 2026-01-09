@@ -7,7 +7,7 @@ float nodeStep;
 vector<Node*> GeneratePath(Node* startNode, Node* targetNode) {
     vector<Node*> openSet;
 
-    for (Node* n : nodes) {
+    for(Node* n : nodes) {
         n->gCost = FLT_MAX;
     }
 
@@ -16,12 +16,7 @@ vector<Node*> GeneratePath(Node* startNode, Node* targetNode) {
     openSet.push_back(startNode);
 
     while (!openSet.empty()) {
-        int lowestF = 0;
-        for (u64 i = 1; i < openSet.size(); i++) {
-            if (openSet[i]->fCost() < openSet[lowestF]->fCost()) {
-                lowestF = i;
-            }
-        }
+        int lowestF = GetLowestF();
 
         Node* currentNode = openSet[lowestF];
         openSet.erase(openSet.begin() + lowestF);
@@ -38,20 +33,7 @@ vector<Node*> GeneratePath(Node* startNode, Node* targetNode) {
             return path;
         }
 
-        for (Node* neighbor : currentNode->GetNeighbors())
-        {
-            float heldGCost = currentNode->gCost + Pythagoran(currentNode->posX, currentNode->posY, neighbor->posX, neighbor->posY);
-
-            if(heldGCost < neighbor->gCost) {
-                neighbor->cameFrom = currentNode;
-                neighbor->gCost = heldGCost;
-                neighbor->hCost = Pythagoran(neighbor->posX, neighbor->posY, targetNode->posX, targetNode->posY);
-
-                if(find(openSet.begin(), openSet.end(), neighbor) == openSet.end()) {
-                    openSet.push_back(neighbor);
-                }
-            }
-        }
+        AssignNeighbors(currentNode, targetNode, openSet);
     }
 
     return vector<Node*>();
@@ -85,4 +67,32 @@ Node* FindFurthestNode(float x, float y) {
     }
 
     return foundNode;
+}
+
+void AssignNeighbors(Node* currentNode, Node* targetNode, vector<Node*>& openSet) {
+    for (Node* neighbor : currentNode->GetNeighbors())
+    {
+        float heldGCost = currentNode->gCost + Pythagoran(currentNode->posX, currentNode->posY, neighbor->posX, neighbor->posY);
+        
+        if(heldGCost < neighbor->gCost) {
+            neighbor->cameFrom = currentNode;
+            neighbor->gCost = heldGCost;
+            neighbor->hCost = Pythagoran(neighbor->posX, neighbor->posY, targetNode->posX, targetNode->posY);
+            
+            if(find(openSet.begin(), openSet.end(), neighbor) == openSet.end()) {
+                openSet.push_back(neighbor);
+            }
+        }
+    }
+}
+
+int GetLowestF() {
+    int lowestF = 0;
+    for (u64 i = 1; i < nodes.size(); i++) {
+        if (nodes[i]->fCost() < nodes[lowestF]->fCost()) {
+            lowestF = i;
+        }
+    }
+
+    return lowestF;
 }
