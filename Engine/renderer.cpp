@@ -1,8 +1,11 @@
 #include "renderer.h"
 
 RenderState renderState;
+Camera cam;
 
-// Initialize default render state to avoid null dereferences
+int screenWidth;
+int screenHeight;
+
 static void RenderStateInit() {
     if (renderState.width == 0 || renderState.height == 0 || renderState.memory == nullptr) {
         renderState.width = 1060;
@@ -18,57 +21,68 @@ static void RenderStateInit() {
         renderState.bitMapInfo.bmiHeader.biBitCount    = 32;
         renderState.bitMapInfo.bmiHeader.biCompression = BI_RGB;
     }
+
+    screenWidth = renderState.width;
+    screenHeight = renderState.height;
 }
 
 void ClearScreen(u32 color) {
     RenderStateInit();
 
     u32* pixel = (u32*)renderState.memory;
-    for (int y = 0; y < renderState.height; y++) {
-        for (int x = 0; x < renderState.width; x++) {
+    for (int y = 0; y < screenHeight; y++) {
+        for (int x = 0; x < screenWidth; x++) {
             *pixel++ = color;
         }
     }
 }
 
 void PixelDrawRect(int posX, int posY, int sizeX, int sizeY, u32 color) {
-    if (!renderState.memory || renderState.width <= 0 || renderState.height <= 0) return;
+    if(!renderState.memory) return;
 
-    posX = Clamp(0, posX, renderState.width);
-    posY = Clamp(0, posY, renderState.height);
-    sizeX = Clamp(0, sizeX + posX, renderState.width);
-    sizeY = Clamp(0, sizeY + posY, renderState.height);
+    POINT p0 = cam.WorldToScreen(posX, posY);
+    POINT p1 = cam.WorldToScreen(posX + sizeX, posY + sizeY);
 
-    for(int y = posY; y < sizeY; y++) {
-        u32* pixel = (u32*)renderState.memory + posX + y * renderState.width;
-        for(int x = posX; x < sizeX; x++) {
+    int x0 = Clamp(0, p0.x, screenWidth);
+    int y0 = Clamp(0, p0.y, screenHeight);
+    int x1 = Clamp(0, p1.x, screenWidth);
+    int y1 = Clamp(0, p1.y, screenHeight);
+
+    for(int y = y0; y < y1; y++) {
+        u32* pixel = (u32*)renderState.memory + x0 + y * screenWidth;
+        for(int x = x0; x < x1; x++){
             *pixel++ = color;
         }
     }
 }
 
-void PixelDrawRectEmpty(int posX, int posY, int sizeX, int sizeY, u32 border, u32 color) {
-    posX = Clamp(0, posX, renderState.width);
-    posY = Clamp(0, posY, renderState.height);
-    sizeX = Clamp(0, sizeX + posX, renderState.width);
-    sizeY = Clamp(0, sizeY + posY, renderState.height);
+void PixelDrawRectEmpty(int posX, int posY, u32 sizeX, u32 sizeY, u32 border, u32 color) {
+    if(!renderState.memory) return;
 
-    for(int y = posY; y < sizeY; y++) {
-        u32* pixel = (u32*)renderState.memory + posX + y * renderState.width;
-        for(int x = posX; x < sizeX; x++){
-            *pixel++ = (x < posX + border || x >= sizeX - border || y < posY + border || y >= sizeY - border) ? color : *pixel;
+    POINT p0 = cam.WorldToScreen(posX, posY);
+    POINT p1 = cam.WorldToScreen(posX + sizeX, posY + sizeY);
+
+    int x0 = Clamp(0, p0.x, screenWidth);
+    int y0 = Clamp(0, p0.y, screenHeight);
+    int x1 = Clamp(0, p1.x, screenWidth);
+    int y1 = Clamp(0, p1.y, screenHeight);
+
+    for(int y = y0; y < y1; y++) {
+        u32* pixel = (u32*)renderState.memory + x0 + y * screenWidth;
+        for(int x = x0; x < x1; x++){
+            *pixel++ = (x < x0 + border || x >= x1 - border || y < y0 + border || y >= y1 - border) ? color : *pixel;
         }
     }
 }
 
 void DrawRect(float posX, float posY, float halfSizeX, float halfSizeY, u32 color) {
-    posX *= renderState.width;
-    posY *= renderState.height;
+    posX *= screenWidth;
+    posY *= screenHeight;
     halfSizeX *= 1060;
     halfSizeY *= 1060;
 
-    posX += renderState.width / 2.f;
-    posY += renderState.height / 2.f;
+    posX += screenWidth / 2.f;
+    posY += screenHeight / 2.f;
 
     int x0 = posX - halfSizeX;
     int x1 = posX + halfSizeX;
@@ -79,15 +93,15 @@ void DrawRect(float posX, float posY, float halfSizeX, float halfSizeY, u32 colo
 }
 
 void DrawRectScaling(float posX, float posY, float halfSizeX, float halfSizeY, u32 color) {
-    int multiplier = Bigger(renderState.width, renderState.height);
+    int multiplier = Bigger(screenWidth, screenHeight);
 
-    posX *= renderState.width;
-    posY *= renderState.height;
+    posX *= screenWidth;
+    posY *= screenHeight;
     halfSizeX *= multiplier;
     halfSizeY *= multiplier;
 
-    posX += renderState.width / 2.f;
-    posY += renderState.height / 2.f;
+    posX += screenWidth / 2.f;
+    posY += screenHeight / 2.f;
 
     int x0 = posX - halfSizeX;
     int x1 = posX + halfSizeX;

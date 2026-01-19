@@ -2,11 +2,13 @@
 
 void MapGenerator::DrawMap() {
     step = 128.f;
+    initialWidth = 2560;
+    initialHeight = 2560;
 
     if(!mapGenerated) {
         openPos.clear();
-        for(u32 x = 0; x < renderState.width; x += (u32)step) {
-            for(u32 y = 0; y < renderState.height; y += (u32)step) {
+        for(u32 x = 0; x < initialWidth; x += (u32)step) {
+            for(u32 y = 0; y < initialHeight; y += (u32)step) {
                 POINT tilePos;
                 tilePos.x = x;
                 tilePos.y = y;
@@ -19,20 +21,21 @@ void MapGenerator::DrawMap() {
     }
     else {
         for(const POINT &pos : openPos) {
-            PixelDrawRect(pos.x, pos.y, (u32)step, (u32)step, grassColor);
+            PixelDrawRect((s64)pos.x, (s64)pos.y, (u32)step, (u32)step, grassColor);
         }
     }
 
     DrawObstacles();
-
     if(!gridGenerated) GenerateNodeGrid();
+
+    mapRegen = false;
 }
 
 void MapGenerator::DrawObstacles() {
     float obstaclesMtpr = 0.00001f;
-    maxObstacles = int(obstaclesMtpr * renderState.width * renderState.height);
+    maxObstacles = int(obstaclesMtpr * initialWidth * initialHeight);
 
-    if(obstacles.empty() && !regeneratingMap) {
+    if(obstacles.empty() && !mapRegen) {
         obstacles.clear();
         int available = (int)openPos.size();
         int toPlace = maxObstacles;
@@ -49,7 +52,16 @@ void MapGenerator::DrawObstacles() {
     }
     else {
         for(const POINT &pos : obstacles) {
-            PixelDrawRect(pos.x, pos.y, (u32)step, (u32)step, waterColor);
+            if(mapRegen) {
+                for(u64 i = 0; i < openPos.size(); ++i) {
+                    if(openPos[i].x == pos.x && openPos[i].y == pos.y) {
+                        openPos.erase(openPos.begin() + i);
+                        break;
+                    }
+                }
+            }
+
+            PixelDrawRect((s64)pos.x, (s64)pos.y, (u32)step, (u32)step, waterColor);
         }
     }
 }
@@ -72,23 +84,14 @@ void MapGenerator::GenerateNodeGrid() {
 }
 
 void MapGenerator::ResetMap() {
-    regeneratingMap = true;
-    
-    initialWidth = renderState.width;
-    initialHeight = renderState.height;
+    mapRegen = true;
 
     mapGenerated = false;
     obstacles.clear();
     gridGenerated = false;
 }
 
-const std::vector<POINT>& MapGenerator::GetMapData() {
-    return obstacles;
-    Log(LOG_ERROR, "Obstacles being registered as open positions, send both openPos and obstacles in a struct.");
-}
-
 void MapGenerator::SetMapData(const std::vector<POINT>& data) {
     ResetMap();
     obstacles = data;
-    regeneratingMap = false;
 }

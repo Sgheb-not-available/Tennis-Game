@@ -1,6 +1,12 @@
 #pragma once
-#include "base.h"
+#include <windows.h>
 #include "renderState.h"
+#include "camera.h"
+
+extern int screenWidth;
+extern int screenHeight;
+
+extern Camera cam;
 
 static void RenderStateInit();
 void ClearScreen(u32 color);

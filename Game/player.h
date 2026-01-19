@@ -2,8 +2,9 @@
 #include <vector>
 #include <iostream>
 #include "../Engine/base.h"
-#include "mapGenerator.h"
 #include "../Engine/win32.h"
+#include "../Engine/camera.h"
+#include "ProceduralGeneration/mapGenerator.h"
 
 class Player {
     public:

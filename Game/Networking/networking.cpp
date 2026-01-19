@@ -12,7 +12,7 @@ void SendData(const void* message, size_t s, ENetPeer *to) {
 }
 
 void SendMapData(ENetPeer *to) {
-    const std::vector<POINT>& mapData = mapGenerator.GetMapData();
+    const std::vector<POINT>& mapData = mapGenerator.obstacles;
     if (mapData.empty()) return;
 
     size_t mapSize = mapData.size() * sizeof(POINT);

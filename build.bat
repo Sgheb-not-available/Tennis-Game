@@ -53,6 +53,11 @@ for %%f in (Game\Networking\*.cpp) do (
     set SOURCES=!SOURCES! "%%f"
 )
 
+for %%f in (Game\ProceduralGeneration\*.cpp) do (
+    echo Found: %%f
+    set SOURCES=!SOURCES! "%%f"
+)
+
 if "%SOURCES%"=="" (
     echo %ESC%[31mNO .cpp FILES FOUND%ESC%[0m
     pause

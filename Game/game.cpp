@@ -4,6 +4,7 @@ std::vector<Player> players;
 bool eNetInit = false;
 int myPlayerId = 0;
 u16 needed = 0;
+POINT selectedTile = {0, 0};
 MapGenerator mapGenerator;
 
 void SimulateGame(Input* input, float deltaTime) {
@@ -15,13 +16,13 @@ void SimulateGame(Input* input, float deltaTime) {
 
     Game::ListPlayers();
 
-    POINT p;
-    GetCursorPos(&p);
-    if(gWindow) ScreenToClient(gWindow, &p);
+    POINT pS;
+    GetCursorPos(&pS);
+    if(gWindow) ScreenToClient(gWindow, &pS);
+    POINT pW = cam.ScreenToWorld((float)pS.x, (float)pS.y);
 
-    //Game::DrawSelectTile(p);
     if(pressed(LEFT_MOUSE)) {
-        players[myPlayerId].SetTarget((float)p.x, (float)p.y);
+        players[myPlayerId].SetTarget((float)pW.x, (float)pW.y);
     }
 
     if(!players.empty()) {
@@ -29,10 +30,9 @@ void SimulateGame(Input* input, float deltaTime) {
     }
 
     mapGenerator.DrawMap();
+    for(Player& p : players) p.Draw();
 
-    for(Player& p : players) {
-        p.Draw();
-    }
+    selectedTile = Game::SelectTile(pW);
 }
 
 namespace Game {
@@ -56,18 +56,27 @@ namespace Game {
         }
     }
 
-    /*
-    void DrawSelectTile(POINT p) {
+    POINT SelectTile(POINT p) {
+        POINT selectedTile = {0, 0};
+
         u32 selectColor = 0xFFFF00;
         u32 size = (u32)step;
-        u32 borderWidth = 20;
+        u32 halfSize = size / 2;
+        u32 borderWidth = 5;
 
-        int x0 = (int)(FindClosestNode(p.x, p.y)->posX); // Line 63 and 64 crashing game
-        int y0 = (int)(FindClosestNode(p.x, p.y)->posY);
+        Node* nodePtr = FindClosestNode((float)p.x, (float)p.y);
+        if (nodePtr) {
+            int x0 = (int)nodePtr->posX;
+            int y0 = (int)nodePtr->posY;
 
-        PixelDrawRectEmpty(x0, y0, size, size, borderWidth, selectColor);
+            selectedTile.x = x0;
+            selectedTile.y = y0;
+
+            PixelDrawRectEmpty(x0 - halfSize, y0 - halfSize, size, size, borderWidth, selectColor);
+        }
+
+        return selectedTile;
     }
-    */
 
     void ListPlayers() {
         needed = (u16)currentClients + 1;

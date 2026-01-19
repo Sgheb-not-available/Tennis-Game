@@ -23,6 +23,10 @@ inline int Bigger(int a, int b) {
     return (a > b) ? a : b;
 }
 
+inline int CheckBounds(int val, int min, int max) {
+    return (val >= min && val <= max);
+}
+
 inline float Pythagoran(float aX, float aY, float bX, float bY) {
     float result = sqrtf((aX - bX) * (aX - bX) + (aY - bY) * (aY - bY));
     return result;

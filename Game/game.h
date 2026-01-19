@@ -5,7 +5,7 @@
 #include <vector>
 #include "../Engine/base.h"
 #include "player.h"
-#include "mapGenerator.h"
+#include "ProceduralGeneration/mapGenerator.h"
 #include "Networking/networking.h"
 
 #define isDown(b) input->buttons[b].isDown
@@ -15,17 +15,17 @@
 extern bool eNetInit;
 extern int myPlayerId;
 extern u16 needed;
+extern POINT selectedTile;
+extern MapGenerator mapGenerator;
 
 void SimulateGame(Input* input, float deltaTime);
 
 namespace Game {
     void ENetInit();
-    void DrawSelectTile(POINT p);
+    POINT SelectTile(POINT p);
     void ListPlayers();
     void SetPNeeded(u16 playerCount);
 }
 
 class Player;
 extern std::vector<Player> players;
-
-extern MapGenerator mapGenerator;

@@ -8,10 +8,10 @@ class MapGenerator {
     public:
         void DrawMap();
         void SetMapData(const std::vector<POINT>& data);
-        const std::vector<POINT>& GetMapData();
         
         vector<POINT> openPos;
-    private:
+        vector<POINT> obstacles;
+    private:        
         void DrawObstacles();
         void GenerateNodeGrid();
         void ResetMap();
@@ -23,8 +23,8 @@ class MapGenerator {
 
         bool mapGenerated = false;
         bool gridGenerated = false;
-        bool regeneratingMap = false;
-        vector<POINT> obstacles;
+        bool mapRegen = false;
+
         u32 grassColor = 0x00FF00;
         u32 waterColor = 0x00FFFF;
 };
